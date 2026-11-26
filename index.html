@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciclo PDCA — Método Vicente Falconi (Treinamento Interativo)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Manuscritas (Estilo Ilustração Lápis de Cor / Caderno) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sketch: ['"Architects Daughter"', 'cursive'],
+                        hand: ['"Patrick Hand"', 'cursive'],
+                        note: ['"Caveat"', 'cursive'],
+                    },
+                    colors: {
+                        paper: '#FAF6EE',
+                        paperDark: '#F2EBDD',
+                        graphite: {
+                            700: '#4A4540',
+                            800: '#35312D',
+                            900: '#262321',
+                        },
+                        pencilBlue: '#3B6E9C',
+                        pencilGreen: '#3E7A56',
+                        pencilAmber: '#C87D28',
+                        pencilRed: '#B84A39',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Fundo de Papel Texturizado Creme com Pauta Sutil de Caderno */
+        body {
+            background-color: #FAF6EE;
+            background-image: 
+                radial-gradient(rgba(38, 35, 33, 0.04) 1px, transparent 0),
+                linear-gradient(to bottom, transparent 27px, rgba(138, 155, 175, 0.16) 28px);
+            background-size: 16px 16px, 100% 28px;
+            color: #262321;
+            font-family: 'Patrick Hand', cursive;
+            overflow-x: hidden;
+        }
+
+        /* Bordas Assimétricas Orgânicas (Traço à Mão Livre) */
+        .sketch-card {
+            border: 2.5px solid #262321;
+            border-radius: 24px 8px 22px 10px / 10px 22px 8px 24px;
+            box-shadow: 5px 6px 0px rgba(38, 35, 33, 0.16);
+            background-color: #FFFDF9;
+        }
+
+        .sketch-card-sm {
+            border: 2px solid #262321;
+            border-radius: 16px 6px 14px 8px / 8px 14px 6px 16px;
+            box-shadow: 3px 3px 0px rgba(38, 35, 33, 0.12);
+        }
+
+        .sketch-pill {
+            border: 2px solid #262321;
+            border-radius: 18px 8px 20px 7px / 8px 18px 7px 20px;
+        }
+
+        .sketch-btn {
+            border: 2px solid #262321;
+            border-radius: 14px 5px 15px 6px / 6px 15px 5px 14px;
+            box-shadow: 2.5px 3px 0px #262321;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+        }
+
+        .sketch-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3.5px 4px 0px #262321;
+        }
+
+        .sketch-btn:active {
+            transform: translate(1.5px, 1.5px);
+            box-shadow: 1px 1px 0px #262321;
+        }
+
+        /* Estados Interativos dos Quadrantes SVG */
+        .quadrant-group {
+            cursor: pointer;
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+            transform-origin: 245px 245px;
+        }
+
+        .quadrant-group:hover {
+            filter: brightness(1.04);
+        }
+
+        .quadrant-active {
+            opacity: 1 !important;
+            transform: scale(1.045);
+            filter: drop-shadow(4px 6px 6px rgba(38, 35, 33, 0.28));
+        }
+
+        .quadrant-dimmed {
+            opacity: 0.26 !important;
+            transform: scale(0.97);
+            filter: grayscale(45%);
+        }
+
+        .quadrant-neutral {
+            opacity: 0.94;
+            transform: scale(1);
+        }
+
+        /* Animação Suave na Troca de Conteúdo */
+        @keyframes sketchFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-panel {
+            animation: sketchFadeIn 0.3s ease-out forwards;
+        }
+
+        /* Linha de Chamada Animada */
+        .callout-line {
+            stroke-dasharray: 6 4;
+            animation: dashMove 18s linear infinite;
+        }
+
+        @keyframes dashMove {
+            to {
+                stroke-dashoffset: -120;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-200">
+
+    <!-- CABEÇALHO -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-3">
+        <div class="sketch-card px-5 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-[#FFFDF8]">
+            <!-- Título e Referência Metodológica -->
+            <div class="flex items-start sm:items-center gap-3.5">
+                <div class="w-12 h-12 shrink-0 sketch-pill bg-[#E3EEF7] flex items-center justify-center rotate-[-3deg]">
+                    <svg class="w-7 h-7 text-graphite-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h1 class="font-sketch text-2xl sm:text-3xl font-bold text-graphite-900 tracking-tight">
+                            Ciclo PDCA — Método Vicente Falconi
+                        </h1>
+                        <span class="px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider sketch-pill bg-[#FCE9C5] text-graphite-900">
+                            Treinamento Interativo
+                        </span>
+                    </div>
+                    <p class="font-note text-xl sm:text-2xl text-graphite-700 leading-snug mt-0.5">
+                        "Gerenciar é atingir metas através das pessoas, girando o PDCA com disciplina."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Seletor PDCA (Melhoria) vs SDCA (Rotina) -->
+            <div class="flex flex-col sm:items-end gap-1.5">
+                <span class="text-xs font-sketch uppercase tracking-wider text-graphite-700 font-bold">
+                    Modo de Gestão (Falconi):
+                </span>
+                <div class="inline-flex p-1 sketch-pill bg-[#F2EBDD] gap-1.5" role="group" aria-label="Seletor PDCA ou SDCA">
+                    <button id="btn-mode-pdca" onclick="setMode('PDCA')"
+                        class="px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold rounded-xl transition-all bg-[#3B6E9C] text-white border-2 border-[#262321] shadow-sm">
+                        PDCA (Melhoria / MASP)
+                    </button>
+                    <button id="btn-mode-sdca" onclick="setMode('SDCA')"
+                        class="px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold rounded-xl transition-all text-graphite-800 hover:bg-white/60 border-2 border-transparent">
+                        SDCA (Manutenção / Rotina)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA PRINCIPAL EM DUAS COLUNAS -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-3 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- COLUNA ESQUERDA: DIAGRAMA CIRCULAR ARTESANAL (LÁPIS DE COR E GRAFITE) -->
+        <section class="lg:col-span-5 sketch-card p-4 sm:p-5 bg-[#FFFDF9] flex flex-col items-center relative">
+            <div class="w-full flex items-center justify-between mb-2">
+                <span id="diagram-badge" class="px-3 py-1 sketch-pill bg-[#E3EEF7] text-xs sm:text-sm font-sketch font-bold text-graphite-900">
+                    Ciclo de Melhoria (Girar para Atingir Metas)
+                </span>
+                <span class="font-note text-lg text-graphite-700 font-bold">
+                    Clique em uma fase ✎
+                </span>
+            </div>
+
+            <!-- SVG Principal do Diagrama com Filtros de Lápis de Cor e Hachuras -->
+            <div class="w-full max-w-[540px] relative select-none">
+                <svg id="pdca-svg" viewBox="0 0 560 490" class="w-full h-auto overflow-visible" role="img" aria-label="Diagrama interativo do Ciclo PDCA">
+                    <defs>
+                        <!-- Filtro de Textura de Lápis de Cor e Grafite no Papel -->
+                        <filter id="pencil-texture" x="-5%" y="-5%" width="110%" height="110%">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" result="noise" />
+                            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.8" xChannelSelector="R" yChannelSelector="G" />
+                        </filter>
+
+                        <!-- Hachura Lápis Azul (P - Plan / S - Standard) -->
+                        <pattern id="hatch-blue" width="10" height="10" patternTransform="rotate(38 0 0)" patternUnits="userSpaceOnUse">
+                            <rect width="10" height="10" fill="#BBD6EC" />
+                            <line x1="0" y1="0" x2="0" y2="10" stroke="#3B6E9C" stroke-width="3.2" stroke-opacity="0.55" />
+                            <line x1="5" y1="0" x2="5" y2="10" stroke="#6FA3D2" stroke-width="1.8" stroke-opacity="0.45" />
+                        </pattern>
+
+                        <!-- Hachura Lápis Verde (D - Do) -->
+                        <pattern id="hatch-green" width="10" height="10" patternTransform="rotate(-35 0 0)" patternUnits="userSpaceOnUse">
+                            <rect width="10" height="10" fill="#BCE0C8" />
+                            <line x1="0" y1="0" x2="0" y2="10" stroke="#3E7A56" stroke-width="3.2" stroke-opacity="0.55" />
+                            <line x1="5" y1="0" x2="5" y2="10" stroke="#6BB387" stroke-width="1.8" stroke-opacity="0.45" />
+                        </pattern>
+
+                        <!-- Hachura Lápis Âmbar/Laranja (C - Check) -->
+                        <pattern id="hatch-amber" width="10" height="10" patternTransform="rotate(42 0 0)" patternUnits="userSpaceOnUse">
+                            <rect width="10" height="10" fill="#F7DCAC" />
+                            <line x1="0" y1="0" x2="0" y2="10" stroke="#C87D28" stroke-width="3.2" stroke-opacity="0.55" />
+                            <line x1="5" y1="0" x2="5" y2="10" stroke="#E5A554" stroke-width="1.8" stroke-opacity="0.45" />
+                        </pattern>
+
+                        <!-- Hachura Lápis Terracota/Vermelho (A - Act) -->
+                        <pattern id="hatch-red" width="10" height="10" patternTransform="rotate(-40 0 0)" patternUnits="userSpaceOnUse">
+                            <rect width="10" height="10" fill="#F2C3BA" />
+                            <line x1="0" y1="0" x2="0" y2="10" stroke="#B84A39" stroke-width="3.2" stroke-opacity="0.55" />
+                            <line x1="5" y1="0" x2="5" y2="10" stroke="#DC7666" stroke-width="1.8" stroke-opacity="0.45" />
+                        </pattern>
+
+                        <!-- Marcador de Seta em Grafite -->
+                        <marker id="graphite-arrow" viewBox="0 0 12 12" refX="8" refY="6" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                            <path d="M 1 2 L 10 6 L 1 10 L 3 6 Z" fill="#262321" />
+                        </marker>
+                    </defs>
+
+                    <!-- Anel Externo de Giro Contínuo (Sentido Horário) -->
+                    <g filter="url(#pencil-texture)" opacity="0.82">
+                        <!-- Arco Superior (P -> D) -->
+                        <path d="M 118 75 A 205 205 0 0 1 372 75" fill="none" stroke="#262321" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#graphite-arrow)" />
+                        <!-- Arco Direito (D -> C) -->
+                        <path d="M 422 125 A 205 205 0 0 1 422 365" fill="none" stroke="#262321" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#graphite-arrow)" />
+                        <!-- Arco Inferior (C -> A) -->
+                        <path d="M 372 415 A 205 205 0 0 1 118 415" fill="none" stroke="#262321" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#graphite-arrow)" />
+                        <!-- Arco Esquerdo (A -> P) -->
+                        <path d="M 68 365 A 205 205 0 0 1 68 125" fill="none" stroke="#262321" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#graphite-arrow)" />
+                    </g>
+
+                    <!-- QUADRANTE P / S (Superior Esquerdo) -->
+                    <g id="quad-P" class="quadrant-group" onclick="selectPhase('P')" role="button" tabindex="0" aria-label="Fase P: Planejar">
+                        <path d="M 245 245 L 70 245 A 175 175 0 0 1 245 70 Z" fill="url(#hatch-blue)" stroke="#262321" stroke-width="3.2" filter="url(#pencil-texture)" />
+                        <path d="M 245 245 L 75 245 A 170 170 0 0 1 245 75 Z" fill="none" stroke="#262321" stroke-width="1.1" stroke-opacity="0.55" filter="url(#pencil-texture)" />
+                        <text id="letter-P" x="165" y="172" text-anchor="middle" class="font-sketch font-bold fill-[#1D3E5E]" style="font-size: 56px;">P</text>
+                        <text id="label-P" x="165" y="202" text-anchor="middle" class="font-hand font-bold fill-[#262321]" style="font-size: 19px;">PLANEJAR</text>
+                        <text id="sub-P" x="165" y="222" text-anchor="middle" class="font-note font-bold fill-[#35312D]" style="font-size: 16px;">(Etapas 1 a 4)</text>
+                    </g>
+
+                    <!-- QUADRANTE D (Superior Direito) -->
+                    <g id="quad-D" class="quadrant-group" onclick="selectPhase('D')" role="button" tabindex="0" aria-label="Fase D: Executar">
+                        <path d="M 245 245 L 245 70 A 175 175 0 0 1 420 245 Z" fill="url(#hatch-green)" stroke="#262321" stroke-width="3.2" filter="url(#pencil-texture)" />
+                        <path d="M 245 245 L 245 75 A 170 170 0 0 1 415 245 Z" fill="none" stroke="#262321" stroke-width="1.1" stroke-opacity="0.55" filter="url(#pencil-texture)" />
+                        <text id="letter-D" x="325" y="172" text-anchor="middle" class="font-sketch font-bold fill-[#1F4930]" style="font-size: 56px;">D</text>
+                        <text id="label-D" x="325" y="202" text-anchor="middle" class="font-hand font-bold fill-[#262321]" style="font-size: 19px;">EXECUTAR</text>
+                        <text id="sub-D" x="325" y="222" text-anchor="middle" class="font-note font-bold fill-[#35312D]" style="font-size: 16px;">(Etapa 5)</text>
+                    </g>
+
+                    <!-- QUADRANTE C (Inferior Direito) -->
+                    <g id="quad-C" class="quadrant-group" onclick="selectPhase('C')" role="button" tabindex="0" aria-label="Fase C: Verificar">
+                        <path d="M 245 245 L 420 245 A 175 175 0 0 1 245 420 Z" fill="url(#hatch-amber)" stroke="#262321" stroke-width="3.2" filter="url(#pencil-texture)" />
+                        <path d="M 245 245 L 415 245 A 170 170 0 0 1 245 415 Z" fill="none" stroke="#262321" stroke-width="1.1" stroke-opacity="0.55" filter="url(#pencil-texture)" />
+                        <text id="letter-C" x="325" y="325" text-anchor="middle" class="font-sketch font-bold fill-[#6E3F0B]" style="font-size: 56px;">C</text>
+                        <text id="label-C" x="325" y="355" text-anchor="middle" class="font-hand font-bold fill-[#262321]" style="font-size: 19px;">VERIFICAR</text>
+                        <text id="sub-C" x="325" y="375" text-anchor="middle" class="font-note font-bold fill-[#35312D]" style="font-size: 16px;">(Etapa 6)</text>
+                    </g>
+
+                    <!-- QUADRANTE A (Inferior Esquerdo) -->
+                    <g id="quad-A" class="quadrant-group" onclick="selectPhase('A')" role="button" tabindex="0" aria-label="Fase A: Agir">
+                        <path d="M 245 245 L 245 420 A 175 175 0 0 1 70 245 Z" fill="url(#hatch-red)" stroke="#262321" stroke-width="3.2" filter="url(#pencil-texture)" />
+                        <path d="M 245 245 L 245 415 A 170 170 0 0 1 75 245 Z" fill="none" stroke="#262321" stroke-width="1.1" stroke-opacity="0.55" filter="url(#pencil-texture)" />
+                        <text id="letter-A" x="165" y="325" text-anchor="middle" class="font-sketch font-bold fill-[#692217]" style="font-size: 56px;">A</text>
+                        <text id="label-A" x="165" y="355" text-anchor="middle" class="font-hand font-bold fill-[#262321]" style="font-size: 19px;">AGIR</text>
+                        <text id="sub-A" x="165" y="375" text-anchor="middle" class="font-note font-bold fill-[#35312D]" style="font-size: 16px;">(Etapas 7 e 8)</text>
+                    </g>
+
+                    <!-- Núcleo Central do Círculo (Eixo de Gestão) -->
+                    <g filter="url(#pencil-texture)">
+                        <circle cx="245" cy="245" r="34" fill="#FFFDF8" stroke="#262321" stroke-width="2.8" />
+                        <text id="center-label" x="245" y="250" text-anchor="middle" class="font-sketch font-bold fill-[#262321]" style="font-size: 15px;">METAS</text>
+                    </g>
+
+                    <!-- Duas Linhas de Chamada em Grafite (conforme esboço do usuário) -->
+                    <g id="callout-connectors" class="hidden lg:block transition-opacity duration-300">
+                        <!-- Linha Superior -->
+                        <line id="conn-line-1" x1="230" y1="115" x2="545" y2="115" stroke="#262321" stroke-width="2.4" class="callout-line" />
+                        <circle id="conn-origin-1" cx="230" cy="115" r="4.5" fill="#262321" />
+                        <circle id="conn-dot-1" cx="545" cy="115" r="5" fill="#FFFDF8" stroke="#262321" stroke-width="2.5" />
+
+                        <!-- Linha Inferior -->
+                        <line id="conn-line-2" x1="230" y1="215" x2="545" y2="215" stroke="#262321" stroke-width="2.4" class="callout-line" />
+                        <circle id="conn-origin-2" cx="230" cy="215" r="4.5" fill="#262321" />
+                        <circle id="conn-dot-2" cx="545" cy="215" r="5" fill="#FFFDF8" stroke="#262321" stroke-width="2.5" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Legenda Rápida Inferior do Diagrama -->
+            <div class="w-full mt-2 pt-3 border-t-2 border-dashed border-[#262321]/30 flex flex-wrap items-center justify-between gap-2 text-sm text-graphite-800">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-[#3B6E9C] border border-[#262321] inline-block"></span>
+                    <span><strong>P</strong> Planejar</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-[#3E7A56] border border-[#262321] inline-block"></span>
+                    <span><strong>D</strong> Executar</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-[#C87D28] border border-[#262321] inline-block"></span>
+                    <span><strong>C</strong> Verificar</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-[#B84A39] border border-[#262321] inline-block"></span>
+                    <span><strong>A</strong> Agir</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLUNA DIREITA: FOLHA DE ANOTAÇÕES COM OBJETIVOS, VÍDEO E ENTREGÁVEIS -->
+        <section class="lg:col-span-7 sketch-card bg-[#FFFDF9] relative overflow-hidden">
+            <!-- Faixa Superior Colorida no Estilo Lápis de Cor -->
+            <div id="panel-accent-bar" class="h-3.5 w-full bg-[#3B6E9C] border-b-2 border-[#262321] transition-colors duration-300"></div>
+
+            <!-- Conteúdo Dinâmico Injetado via JavaScript -->
+            <div id="detail-panel-content" class="p-5 sm:p-6">
+                <!-- Preenchido automaticamente ao carregar -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- RODAPÉ / CONTROLES DE APRESENTAÇÃO -->
+    <footer class="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-2 pb-6">
+        <div class="sketch-card px-4 py-3 bg-[#FFFDF8] flex flex-col sm:flex-row items-center justify-between gap-3">
+            <!-- Botões Rápidos de Navegação entre Fases -->
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <button id="nav-btn-P" onclick="selectPhase('P')" class="sketch-btn px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold bg-[#E3EEF7] text-graphite-900">
+                    1. P — Planejar
+                </button>
+                <button id="nav-btn-D" onclick="selectPhase('D')" class="sketch-btn px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold bg-[#E1F2E7] text-graphite-900">
+                    2. D — Executar
+                </button>
+                <button id="nav-btn-C" onclick="selectPhase('C')" class="sketch-btn px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold bg-[#FCECD2] text-graphite-900">
+                    3. C — Verificar
+                </button>
+                <button id="nav-btn-A" onclick="selectPhase('A')" class="sketch-btn px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold bg-[#F9DFDA] text-graphite-900">
+                    4. A — Agir
+                </button>
+                <button id="nav-btn-ALL" onclick="resetOverview()" class="sketch-btn px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold bg-[#F2EBDD] text-graphite-900">
+                    Visão Geral
+                </button>
+            </div>
+
+            <!-- Dica de Atalhos de Teclado -->
+            <div class="text-xs sm:text-sm text-graphite-700 flex items-center gap-2">
+                <span class="px-2 py-0.5 border border-[#262321] rounded bg-[#FAF6EE] font-mono text-xs">←</span>
+                <span class="px-2 py-0.5 border border-[#262321] rounded bg-[#FAF6EE] font-mono text-xs">→</span>
+                <span>Navegar fases</span>
+                <span class="mx-1">•</span>
+                <span class="px-2 py-0.5 border border-[#262321] rounded bg-[#FAF6EE] font-mono text-xs">ESC</span>
+                <span>Visão Geral</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * Base de Conhecimento Metodológica (Prof. Vicente Falconi — PDCA e SDCA)
+         * Inclui pontos de origem/destino das linhas de chamada e parâmetros exatos do YouTube.
+         */
+        const METHODOLOGY_DATA = {
+            PDCA: {
+                badgeText: "Ciclo de Melhoria (Girar para Atingir Metas)",
+                centerLabel: "METAS",
+                letters: { P: "P", D: "D", C: "C", A: "A" },
+                labels: { P: "PLANEJAR", D: "EXECUTAR", C: "VERIFICAR", A: "AGIR" },
+                subs: { P: "(Etapas 1 a 4)", D: "(Etapa 5)", C: "(Etapa 6)", A: "(Etapas 7 e 8)" },
+                phases: {
+                    P: {
+                        letter: "P",
+                        title: "Plan — Planejar",
+                        maspBadge: "Etapas 1 a 4 do MASP",
+                        accentClass: "bg-[#3B6E9C]",
+                        badgeBg: "bg-[#D9EAF7]",
+                        borderColor: "border-[#3B6E9C]",
+                        originPoints: [{ x: 235, y: 115 }, { x: 235, y: 215 }],
+                        targetPoints: [{ x: 545, y: 115 }, { x: 545, y: 215 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 190,
+                            end: 246,
+                            timeLabel: "03:10 – 04:06",
+                            topic: "Planejamento e Definição de Metas (Plan)"
+                        },
+                        objective: "Estabelecer claramente onde queremos chegar (Meta = Objetivo + Valor + Prazo) e descobrir as causas fundamentais do problema (GAP entre o resultado atual e o desejado) para estruturar um plano de ação consistente.",
+                        maspSteps: [
+                            { num: "1", name: "Identificação do Problema", desc: "Definir claramente o problema (resultado indesejado), levantar histórico e estabelecer a Meta." },
+                            { num: "2", name: "Observação", desc: "Investigar as características específicas do problema sob diversos pontos de vista (estratificação)." },
+                            { num: "3", name: "Análise", desc: "Descobrir as causas fundamentais utilizando Diagrama de Ishikawa e os 5 Porquês." },
+                            { num: "4", name: "Plano de Ação", desc: "Conceber contramedidas eficazes para bloquear as causas raízes usando a matriz 5W2H." }
+                        ],
+                        deliverables: [
+                            "Declaração da Meta SMART (Objetivo, Valor numérico e Prazo definido)",
+                            "Gráfico de Pareto e Estratificação dos dados históricos do processo",
+                            "Diagrama de Causa e Efeito (Ishikawa) com causas raízes validadas",
+                            "Plano de Ação 5W2H completo com responsáveis, prazos e indicadores"
+                        ]
+                    },
+                    D: {
+                        letter: "D",
+                        title: "Do — Executar",
+                        maspBadge: "Etapa 5 do MASP",
+                        accentClass: "bg-[#3E7A56]",
+                        badgeBg: "bg-[#D8EFE0]",
+                        borderColor: "border-[#3E7A56]",
+                        originPoints: [{ x: 418, y: 155 }, { x: 432, y: 225 }],
+                        targetPoints: [{ x: 545, y: 135 }, { x: 545, y: 225 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 284,
+                            end: 307,
+                            timeLabel: "04:44 – 05:07",
+                            topic: "Capacitação e Execução Disciplinada (Do)"
+                        },
+                        objective: "Garantir que todos os envolvidos compreendam e dominem o método planejado antes da execução, implementando as ações do 5W2H com disciplina e coletando fatos e dados durante a operação.",
+                        maspSteps: [
+                            { num: "5A", name: "Divulgação e Treinamento", desc: "Capacitar os executores no 'porquê' e no 'como' realizar cada tarefa planejada." },
+                            { num: "5B", name: "Execução das Contramedidas", desc: "Colocar o plano 5W2H em prática rigorosamente dentro dos prazos acordados." },
+                            { num: "5C", name: "Coleta de Dados", desc: "Registrar evidências, medições e ocorrências durante a execução para alimentar a etapa Check." }
+                        ],
+                        deliverables: [
+                            "Listas de presença e registros de treinamento operacional da equipe",
+                            "Cronograma 5W2H atualizado com evidências fotográficas ou documentais",
+                            "Folhas de verificação e planilhas de coleta de dados do processo",
+                            "Diário de bordo com anomalias observadas durante a implantação"
+                        ]
+                    },
+                    C: {
+                        letter: "C",
+                        title: "Check — Verificar",
+                        maspBadge: "Etapa 6 do MASP",
+                        accentClass: "bg-[#C87D28]",
+                        badgeBg: "bg-[#FCE8C8]",
+                        borderColor: "border-[#C87D28]",
+                        originPoints: [{ x: 430, y: 275 }, { x: 405, y: 355 }],
+                        targetPoints: [{ x: 545, y: 255 }, { x: 545, y: 355 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 307,
+                            end: 333,
+                            timeLabel: "05:07 – 05:33",
+                            topic: "Verificação de Fatos e Dados (Check)"
+                        },
+                        objective: "Avaliar com isenção, baseando-se exclusivamente em fatos e dados (e não em opiniões), se as ações executadas foram eficazes para bloquear as causas fundamentais e atingir a meta estabelecida no 'P'.",
+                        maspSteps: [
+                            { num: "6A", name: "Comparação Antes x Depois", desc: "Confrontar os indicadores atuais com a linha de base e com a meta estipulada." },
+                            { num: "6B", name: "Verificação de Efeitos Secundários", desc: "Checar se as mudanças geraram impactos indesejados em outras áreas ou indicadores." },
+                            { num: "6C", name: "Avaliação da Eficácia", desc: "Decidir objetivamente: a meta foi atingida? Se não, retornar à etapa de Observação/Análise." }
+                        ],
+                        deliverables: [
+                            "Gráficos comparativos (Antes vs. Depois) demonstrando o fechamento do GAP",
+                            "Relatório de Verificação de Eficácia das ações do plano 5W2H",
+                            "Checklist de efeitos colaterais (qualidade, custo, segurança e moral)",
+                            "Parecer técnico de validação do atingimento ou replanejamento da meta"
+                        ]
+                    },
+                    A: {
+                        letter: "A",
+                        title: "Act — Agir",
+                        maspBadge: "Etapas 7 e 8 do MASP",
+                        accentClass: "bg-[#B84A39]",
+                        badgeBg: "bg-[#F8DAD4]",
+                        borderColor: "border-[#B84A39]",
+                        originPoints: [{ x: 235, y: 285 }, { x: 235, y: 390 }],
+                        targetPoints: [{ x: 545, y: 275 }, { x: 545, y: 390 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 333,
+                            end: 380,
+                            timeLabel: "05:33 – 06:20",
+                            topic: "Padronização e Ação Corretiva (Act)"
+                        },
+                        objective: "Incorporar permanentemente as boas práticas na rotina da organização (transição do PDCA para o SDCA) para impedir o retorno do problema, ou agir corretivamente caso a meta não tenha sido atingida.",
+                        maspSteps: [
+                            { num: "7", name: "Padronização", desc: "Elaborar ou revisar POPs, treinar os envolvidos e criar mecanismos à prova de erro (Poka-Yoke)." },
+                            { num: "8", name: "Conclusão", desc: "Relacionar os problemas remanescentes, avaliar o aprendizado da equipe e planejar o próximo ciclo." }
+                        ],
+                        deliverables: [
+                            "Procedimento Operacional Padrão (POP) ou Instrução de Trabalho (IT) revisados",
+                            "Sistemas de acompanhamento visual e auditoria periódica da rotina (SDCA)",
+                            "Relatório final de encerramento do MASP com lições aprendidas",
+                            "Lista de problemas remanescentes para alimentar o próximo ciclo PDCA"
+                        ]
+                    }
+                }
+            },
+            SDCA: {
+                badgeText: "Ciclo de Manutenção (Estabilizar Resultados)",
+                centerLabel: "PADRÃO",
+                letters: { P: "S", D: "D", C: "C", A: "A" },
+                labels: { P: "PADRONIZAR", D: "EXECUTAR", C: "VERIFICAR", A: "AGIR" },
+                subs: { P: "(POP / Meta Padrão)", D: "(Cumprir POP)", C: "(Auditar Rotina)", A: "(Tratar Anomalia)" },
+                phases: {
+                    P: {
+                        letter: "S",
+                        title: "Standard — Padronizar",
+                        maspBadge: "Base da Rotina (Falconi)",
+                        accentClass: "bg-[#3B6E9C]",
+                        badgeBg: "bg-[#D9EAF7]",
+                        borderColor: "border-[#3B6E9C]",
+                        originPoints: [{ x: 235, y: 115 }, { x: 235, y: 215 }],
+                        targetPoints: [{ x: 545, y: 115 }, { x: 545, y: 215 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 190,
+                            end: 246,
+                            timeLabel: "03:10 – 04:06",
+                            topic: "Definição do Padrão Operacional (Standard)"
+                        },
+                        objective: "Estabelecer o melhor método conhecido e comprovado para executar uma tarefa repetitiva, definindo claramente a Meta Padrão e os limites aceitáveis de variação dos resultados.",
+                        maspSteps: [
+                            { num: "S1", name: "Definição da Meta Padrão", desc: "Estabelecer a faixa normal de operação dos itens de controle da rotina." },
+                            { num: "S2", name: "Redação do POP", desc: "Documentar a sequência crítica de tarefas de forma simples, visual e acessível no posto de trabalho." }
+                        ],
+                        deliverables: [
+                            "Procedimento Operacional Padrão (POP) vigente e validado",
+                            "Matriz de Itens de Controle e Itens de Verificação do processo",
+                            "Faixa de controle estatístico (limite superior e inferior aceitáveis)",
+                            "Plano de capacitação no padrão para novos colaboradores"
+                        ]
+                    },
+                    D: {
+                        letter: "D",
+                        title: "Do — Executar o Padrão",
+                        maspBadge: "Disciplina Operacional",
+                        accentClass: "bg-[#3E7A56]",
+                        badgeBg: "bg-[#D8EFE0]",
+                        borderColor: "border-[#3E7A56]",
+                        originPoints: [{ x: 418, y: 155 }, { x: 432, y: 225 }],
+                        targetPoints: [{ x: 545, y: 135 }, { x: 545, y: 225 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 284,
+                            end: 307,
+                            timeLabel: "04:44 – 05:07",
+                            topic: "Cumprimento Disciplinado do Padrão (Do)"
+                        },
+                        objective: "Assegurar que todos os operadores executem a rotina exatamente conforme descrito no POP, reduzindo a variabilidade humana e mantendo a previsibilidade do processo.",
+                        maspSteps: [
+                            { num: "D1", name: "Treinamento no Trabalho (OJT)", desc: "Garantir que cada executor tenha habilidade prática comprovada no POP." },
+                            { num: "D2", name: "Operação Padronizada", desc: "Executar a rotina diária seguindo os critérios de qualidade e segurança definidos." }
+                        ],
+                        deliverables: [
+                            "Matriz de Polivalência (habilidades por operador) atualizada",
+                            "Registros diários de produção, qualidade e atendimento",
+                            "Quadros de Gestão à Vista atualizados no gemba (local de trabalho)",
+                            "Sinalização imediata de qualquer desvio operacional"
+                        ]
+                    },
+                    C: {
+                        letter: "C",
+                        title: "Check — Verificar a Rotina",
+                        maspBadge: "Auditoria de Processo",
+                        accentClass: "bg-[#C87D28]",
+                        badgeBg: "bg-[#FCE8C8]",
+                        borderColor: "border-[#C87D28]",
+                        originPoints: [{ x: 430, y: 275 }, { x: 405, y: 355 }],
+                        targetPoints: [{ x: 545, y: 255 }, { x: 545, y: 355 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 307,
+                            end: 333,
+                            timeLabel: "05:07 – 05:33",
+                            topic: "Monitoramento e Auditoria da Rotina (Check)"
+                        },
+                        objective: "Checar periodicamente se o padrão está sendo cumprido na prática (auditoria de processo) e se os indicadores permanecem estáveis dentro da faixa prevista.",
+                        maspSteps: [
+                            { num: "C1", name: "Monitoramento de Resultados", desc: "Acompanhar cartas de controle e gráficos sequenciais dos itens de controle." },
+                            { num: "C2", name: "Auditoria do Cumprimento do POP", desc: "Observar a execução real no gemba para confirmar aderência ao padrão." }
+                        ],
+                        deliverables: [
+                            "Checklist de Auditoria de Processo (aderência ao POP)",
+                            "Cartas de controle e gráficos de tendência dos indicadores da área",
+                            "Relatório de desvios e anomalias detectadas no turno/semana",
+                            "Diagnóstico de estabilidade do processo"
+                        ]
+                    },
+                    A: {
+                        letter: "A",
+                        title: "Action — Ação Corretiva",
+                        maspBadge: "Tratamento de Anomalias",
+                        accentClass: "bg-[#B84A39]",
+                        badgeBg: "bg-[#F8DAD4]",
+                        borderColor: "border-[#B84A39]",
+                        originPoints: [{ x: 235, y: 285 }, { x: 235, y: 390 }],
+                        targetPoints: [{ x: 545, y: 275 }, { x: 545, y: 390 }],
+                        video: {
+                            id: "AZcLM6sd_oo",
+                            start: 333,
+                            end: 380,
+                            timeLabel: "05:33 – 06:20",
+                            topic: "Tratamento de Anomalias e Transição para PDCA"
+                        },
+                        objective: "Restabelecer rapidamente a normalidade quando ocorre uma anomalia pontual (remoção do sintoma) e acionar um ciclo PDCA de melhoria sempre que um problema se tornar crônico ou recorrente.",
+                        maspSteps: [
+                            { num: "A1", name: "Ação Imediata (Contenção)", desc: "Corrigir o desvio pontual para proteger o cliente e retomar o padrão." },
+                            { num: "A2", name: "Relato de Anomalia / Acionar PDCA", desc: "Se a anomalia se repetir, abrir um projeto PDCA (MASP) para eliminar a causa raiz." }
+                        ],
+                        deliverables: [
+                            "Relatórios de Análise e Tratamento de Anomalias (RATA)",
+                            "Reciclagem de treinamento quando a causa for falha de cumprimento do POP",
+                            "Revisão do POP caso o padrão tenha se mostrado inadequado",
+                            "Abertura formal de ciclo PDCA para problemas crônicos"
+                        ]
+                    }
+                }
+            }
+        };
+
+        // Estado Atual da Aplicação (Inicia com 'P' selecionado conforme solicitado)
+        let currentMode = 'PDCA';
+        let activePhase = 'P';
+        const phaseOrder = ['P', 'D', 'C', 'A'];
+
+        /**
+         * Alterna entre os modos PDCA (Melhoria) e SDCA (Rotina)
+         */
+        function setMode(mode) {
+            currentMode = mode;
+            const modeData = METHODOLOGY_DATA[mode];
+
+            // Atualiza botões do cabeçalho
+            const btnPdca = document.getElementById('btn-mode-pdca');
+            const btnSdca = document.getElementById('btn-mode-sdca');
+
+            if (mode === 'PDCA') {
+                btnPdca.className = "px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold rounded-xl transition-all bg-[#3B6E9C] text-white border-2 border-[#262321] shadow-sm";
+                btnSdca.className = "px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold rounded-xl transition-all text-graphite-800 hover:bg-white/60 border-2 border-transparent";
+            } else {
+                btnSdca.className = "px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold rounded-xl transition-all bg-[#3E7A56] text-white border-2 border-[#262321] shadow-sm";
+                btnPdca.className = "px-3.5 py-1.5 text-sm sm:text-base font-sketch font-bold rounded-xl transition-all text-graphite-800 hover:bg-white/60 border-2 border-transparent";
+            }
+
+            // Atualiza rótulos do diagrama SVG
+            document.getElementById('diagram-badge').textContent = modeData.badgeText;
+            document.getElementById('center-label').textContent = modeData.centerLabel;
+
+            phaseOrder.forEach(key => {
+                document.getElementById(`letter-${key}`).textContent = modeData.letters[key];
+                document.getElementById(`label-${key}`).textContent = modeData.labels[key];
+                document.getElementById(`sub-${key}`).textContent = modeData.subs[key];
+            });
+
+            // Atualiza botões do rodapé
+            document.getElementById('nav-btn-P').textContent = mode === 'PDCA' ? '1. P — Planejar' : '1. S — Padronizar';
+            document.getElementById('nav-btn-D').textContent = '2. D — Executar';
+            document.getElementById('nav-btn-C').textContent = '3. C — Verificar';
+            document.getElementById('nav-btn-A').textContent = '4. A — Agir';
+
+            updateUI();
+        }
+
+        /**
+         * Seleciona uma fase específica (P, D, C ou A)
+         */
+        function selectPhase(phaseKey) {
+            activePhase = phaseKey;
+            updateUI();
+        }
+
+        /**
+         * Reseta para a Visão Geral (todos os quadrantes neutros)
+         */
+        function resetOverview() {
+            activePhase = null;
+            updateUI();
+        }
+
+        /**
+         * Atualiza estados visuais dos quadrantes, linhas de chamada e painel lateral
+         */
+        function updateUI() {
+            const connectors = document.getElementById('callout-connectors');
+
+            // Atualiza cada quadrante SVG e botão do rodapé
+            phaseOrder.forEach(key => {
+                const quad = document.getElementById(`quad-${key}`);
+                const navBtn = document.getElementById(`nav-btn-${key}`);
+
+                quad.classList.remove('quadrant-active', 'quadrant-dimmed', 'quadrant-neutral');
+
+                if (activePhase === null) {
+                    quad.classList.add('quadrant-neutral');
+                    navBtn.classList.remove('ring-2', 'ring-[#262321]', 'scale-105');
+                } else if (activePhase === key) {
+                    quad.classList.add('quadrant-active');
+                    navBtn.classList.add('ring-2', 'ring-[#262321]', 'scale-105');
+                } else {
+                    quad.classList.add('quadrant-dimmed');
+                    navBtn.classList.remove('ring-2', 'ring-[#262321]', 'scale-105');
+                }
+            });
+
+            // Atualiza linhas de chamada em grafite
+            if (activePhase && connectors) {
+                const phaseData = METHODOLOGY_DATA[currentMode].phases[activePhase];
+                connectors.style.opacity = '1';
+
+                const line1 = document.getElementById('conn-line-1');
+                const orig1 = document.getElementById('conn-origin-1');
+                const dot1 = document.getElementById('conn-dot-1');
+
+                const line2 = document.getElementById('conn-line-2');
+                const orig2 = document.getElementById('conn-origin-2');
+                const dot2 = document.getElementById('conn-dot-2');
+
+                line1.setAttribute('x1', phaseData.originPoints[0].x);
+                line1.setAttribute('y1', phaseData.originPoints[0].y);
+                line1.setAttribute('x2', phaseData.targetPoints[0].x);
+                line1.setAttribute('y2', phaseData.targetPoints[0].y);
+                orig1.setAttribute('cx', phaseData.originPoints[0].x);
+                orig1.setAttribute('cy', phaseData.originPoints[0].y);
+                dot1.setAttribute('cx', phaseData.targetPoints[0].x);
+                dot1.setAttribute('cy', phaseData.targetPoints[0].y);
+
+                line2.setAttribute('x1', phaseData.originPoints[1].x);
+                line2.setAttribute('y1', phaseData.originPoints[1].y);
+                line2.setAttribute('x2', phaseData.targetPoints[1].x);
+                line2.setAttribute('y2', phaseData.targetPoints[1].y);
+                orig2.setAttribute('cx', phaseData.originPoints[1].x);
+                orig2.setAttribute('cy', phaseData.originPoints[1].y);
+                dot2.setAttribute('cx', phaseData.targetPoints[1].x);
+                dot2.setAttribute('cy', phaseData.targetPoints[1].y);
+            } else if (connectors) {
+                connectors.style.opacity = '0';
+            }
+
+            renderRightPanel();
+        }
+
+        /**
+         * Renderiza o conteúdo do painel lateral direito (Folha de Anotações)
+         */
+        function renderRightPanel() {
+            const container = document.getElementById('detail-panel-content');
+            const accentBar = document.getElementById('panel-accent-bar');
+
+            // MODO VISÃO GERAL (Quando nenhuma fase específica está selecionada)
+            if (activePhase === null) {
+                accentBar.className = "h-3.5 w-full bg-[#262321] border-b-2 border-[#262321] transition-colors duration-300";
+                const isPdca = currentMode === 'PDCA';
+
+                container.innerHTML = `
+                    <div class="animate-panel space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#262321]/30 pb-3">
+                            <div>
+                                <span class="px-2.5 py-0.5 sketch-pill bg-[#F2EBDD] text-xs font-sketch font-bold uppercase">
+                                    Visão Geral da Metodologia
+                                </span>
+                                <h2 class="font-sketch text-2xl sm:text-3xl font-bold text-graphite-900 mt-1">
+                                    ${isPdca ? 'O Ciclo PDCA de Melhoria (MASP)' : 'O Ciclo SDCA de Manutenção da Rotina'}
+                                </h2>
+                            </div>
+                        </div>
+
+                        <p class="text-base sm:text-lg text-graphite-800 leading-relaxed">
+                            ${isPdca 
+                                ? 'Segundo o Prof. Vicente Falconi, o <strong>PDCA</strong> é o método universal para atingir metas de melhoria (resolver problemas crônicos e fechar GAPs de desempenho). Ele desdobra-se nas <strong>8 etapas do MASP</strong>.'
+                                : 'Segundo o Prof. Vicente Falconi, o <strong>SDCA</strong> garante a previsibilidade e a estabilidade dos resultados do dia a dia. Sem padronização (S), não há base sólida para girar o ciclo de melhoria (PDCA).'}
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            ${phaseOrder.map(key => {
+                                const p = METHODOLOGY_DATA[currentMode].phases[key];
+                                return `
+                                    <button onclick="selectPhase('${key}')" class="text-left p-3.5 sketch-card-sm bg-[#FAF6EE] hover:bg-white transition-all group">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="px-2.5 py-0.5 sketch-pill ${p.badgeBg} font-sketch font-bold text-sm text-graphite-900">
+                                                ${p.letter} — ${p.title.split('—')[1].trim()}
+                                            </span>
+                                            <span class="text-xs font-bold text-graphite-700 group-hover:translate-x-0.5 transition-transform">Explorar →</span>
+                                        </div>
+                                        <p class="text-sm text-graphite-800 line-clamp-2 mt-1">${p.objective}</p>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <div class="p-3.5 sketch-card-sm bg-[#F2EBDD]/80 text-sm text-graphite-900">
+                            <strong>💡 Dica para o Treinamento:</strong> Clique em qualquer quadrante do diagrama à esquerda (ou use os botões inferiores) para destacar a fase, assistir ao trecho específico do vídeo explicativo e detalhar os entregáveis.
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // MODO FASE SELECIONADA (P, D, C ou A)
+            const phase = METHODOLOGY_DATA[currentMode].phases[activePhase];
+            accentBar.className = `h-3.5 w-full ${phase.accentClass} border-b-2 border-[#262321] transition-colors duration-300`;
+
+            const embedUrl = `https://www.youtube-nocookie.com/embed/${phase.video.id}?start=${phase.video.start}&end=${phase.video.end}&rel=0`;
+            const externalWatchUrl = `https://www.youtube.com/watch?v=${phase.video.id}&t=${phase.video.start}s`;
+
+            container.innerHTML = `
+                <div class="animate-panel space-y-4">
+                    <!-- Cabeçalho da Fase -->
+                    <div class="flex flex-wrap items-start justify-between gap-2 border-b-2 border-dashed border-[#262321]/30 pb-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-12 h-12 sketch-pill ${phase.badgeBg} flex items-center justify-center font-sketch text-3xl font-bold text-graphite-900 shrink-0">
+                                ${phase.letter}
+                            </span>
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h2 class="font-sketch text-2xl sm:text-3xl font-bold text-graphite-900 leading-none">
+                                        ${phase.title}
+                                    </h2>
+                                    <span class="px-2.5 py-0.5 sketch-pill ${phase.badgeBg} text-xs font-sketch font-bold text-graphite-900">
+                                        ${phase.maspBadge}
+                                    </span>
+                                </div>
+                                <p class="font-note text-xl text-graphite-700 font-bold mt-0.5">
+                                    Modo: ${currentMode === 'PDCA' ? 'PDCA (Melhoria Contínua)' : 'SDCA (Manutenção da Rotina)'}
+                                </p>
+                            </div>
+                        </div>
+
+                        <button onclick="resetOverview()" class="px-3 py-1 sketch-btn bg-[#F2EBDD] text-xs font-sketch font-bold text-graphite-900">
+                            ✕ Visão Geral
+                        </button>
+                    </div>
+
+                    <!-- 1. Objetivo Central (Falconi) -->
+                    <div class="p-3.5 sketch-card-sm bg-[#F4EDE0]/80">
+                        <h3 class="font-sketch text-xs font-bold uppercase tracking-wider text-graphite-800 flex items-center gap-1.5 mb-1">
+                            <svg class="w-4 h-4 text-graphite-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Objetivo Central (Prof. Vicente Falconi)
+                        </h3>
+                        <p class="text-base text-graphite-900 leading-relaxed">
+                            ${phase.objective}
+                        </p>
+                    </div>
+
+                    <!-- 2. Preview do Vídeo Explicativo Sincronizado -->
+                    <div class="p-3.5 sketch-card-sm bg-[#FFFDF9]">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 sketch-pill ${phase.badgeBg} flex items-center justify-center">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                </span>
+                                <h3 class="font-sketch text-xs sm:text-sm font-bold uppercase tracking-wider text-graphite-900">
+                                    Preview do Vídeo — ${phase.video.topic}
+                                </h3>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="px-2.5 py-0.5 sketch-pill text-xs font-bold ${phase.badgeBg}">
+                                    Trecho em foco: ${phase.video.timeLabel}
+                                </span>
+                                <button onclick="replayPhaseVideo('${embedUrl}')"
+                                    class="px-2.5 py-0.5 sketch-btn bg-[#F2EBDD] text-xs font-sketch font-bold text-graphite-900 flex items-center gap-1"
+                                    title="Reiniciar o vídeo exatamente no início desta fase">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Rever trecho (${phase.video.timeLabel})
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Container Responsivo 16:9 com o Iframe Oficial do YouTube -->
+                        <div class="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-[#262321] bg-[#262321]">
+                            <iframe id="phase-video-iframe"
+                                width="560"
+                                height="315"
+                                class="w-full h-full"
+                                src="https://www.youtube.com/embed/AZcLM6sd_oo?si=T5cviAKjig6Gcf7i&start=${phase.video.start}&end=${phase.video.end}&rel=0"
+                                title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+
+                        <!-- Rodapé do Player com Link Direto para o Minuto Exato -->
+                        <div class="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-graphite-700">
+                            <span>O vídeo inicia automaticamente no minuto <strong>${phase.video.timeLabel.split('–')[0].trim()}</strong>.</span>
+                            <a href="https://youtu.be/AZcLM6sd_oo?t=${phase.video.start}" target="_blank" rel="noopener noreferrer"
+                               class="underline font-bold text-graphite-900 hover:text-[#3B6E9C] flex items-center gap-1">
+                                Abrir no YouTube ↗
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 3. Etapas do MASP / Desdobramento Metodológico -->
+                    <div>
+                        <h3 class="font-sketch text-sm font-bold uppercase tracking-wider text-graphite-900 mb-2 flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full ${phase.accentClass} border border-[#262321]"></span>
+                            Desdobramento das Etapas (${phase.maspBadge})
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            ${phase.maspSteps.map(step => `
+                                <div class="p-2.5 sketch-card-sm bg-[#FAF6EE]">
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <span class="px-2 py-0.2 sketch-pill ${phase.badgeBg} font-sketch text-xs font-bold text-graphite-900">
+                                            Etapa ${step.num}
+                                        </span>
+                                        <span class="font-sketch text-sm font-bold text-graphite-900">${step.name}</span>
+                                    </div>
+                                    <p class="text-sm text-graphite-800 leading-snug">${step.desc}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 4. Principais Entregáveis (Bullet Points) -->
+                    <div class="p-3.5 sketch-card-sm bg-[#FFFDF8]">
+                        <h3 class="font-sketch text-sm font-bold uppercase tracking-wider text-graphite-900 mb-2 flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-graphite-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Principais Entregáveis desta Fase
+                        </h3>
+                        <ul class="space-y-1.5">
+                            ${phase.deliverables.map(item => `
+                                <li class="flex items-start gap-2.5 text-base text-graphite-900">
+                                    <span class="mt-1.5 w-2.5 h-2.5 rounded-full ${phase.accentClass} border border-[#262321] shrink-0"></span>
+                                    <span>${item}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Reinicia o iframe do YouTube exatamente no segundo inicial da etapa selecionada
+         */
+        function replayPhaseVideo(baseEmbedUrl) {
+            const iframe = document.getElementById('phase-video-iframe');
+            if (iframe && activePhase) {
+                const phase = METHODOLOGY_DATA[currentMode].phases[activePhase];
+                iframe.src = `https://www.youtube.com/embed/AZcLM6sd_oo?si=T5cviAKjig6Gcf7i&start=${phase.video.start}&end=${phase.video.end}&rel=0&autoplay=1`;
+            }
+        }
+
+        /**
+         * Navegação via Teclado (Setas Esquerda/Direita e ESC)
+         */
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                resetOverview();
+                return;
+            }
+
+            if (event.key === 'ArrowRight') {
+                if (activePhase === null) {
+                    selectPhase('P');
+                } else {
+                    const nextIdx = (phaseOrder.indexOf(activePhase) + 1) % phaseOrder.length;
+                    selectPhase(phaseOrder[nextIdx]);
+                }
+            } else if (event.key === 'ArrowLeft') {
+                if (activePhase === null) {
+                    selectPhase('A');
+                } else {
+                    const prevIdx = (phaseOrder.indexOf(activePhase) - 1 + phaseOrder.length) % phaseOrder.length;
+                    selectPhase(phaseOrder[prevIdx]);
+                }
+            }
+        });
+
+        // Inicialização no carregamento da página (começa na fase P destacada)
+        window.addEventListener('DOMContentLoaded', () => {
+            setMode('PDCA');
+            selectPhase('P');
+        });
+    </script>
+</body>
+</html>
